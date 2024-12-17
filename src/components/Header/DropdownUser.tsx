@@ -1,5 +1,5 @@
 'use client';
-import { useState} from 'react';
+import {useState} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ClickOutside from '@/components/ClickOutside';
@@ -8,9 +8,7 @@ import {useUserStore} from '../../store';
 import {logout} from '../../services/auth';
 
 const DropdownUser = () => {
-  const { user} = useUserStore();
-
-
+  const {user} = useUserStore();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
