@@ -10,7 +10,7 @@ const Posts = () => {
       <div className="mx-auto max-w-242.5">
         <Breadcrumb pageName="Posts" />
         <Link
-          href="/posts/add"
+          href="/admin/posts/add"
           className="bg-orange-200 px-4 pt-2 my-2   text-white "
         >
           Add New Post

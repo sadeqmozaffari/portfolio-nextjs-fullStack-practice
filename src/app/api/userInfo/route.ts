@@ -1,32 +1,38 @@
 import {PrismaClient} from '@prisma/client';
 import {NextResponse} from 'next/server';
-import jwt from 'jsonwebtoken';
-import {cookies} from 'next/headers';
+import {decodeToken} from '@/helper/authentication';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
-  const token = (await cookies()).get('token')?.value;
-
-  if (!token)
-    return NextResponse.json(
-      {message: 'Authorization Required'},
-      {
-        status: 401,
-      }
-    );
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const decodedToken: any = jwt.verify(token, 'my secret');
-
-  const userId = decodedToken.id;
-  const email = decodedToken.email;
-
+export async function GET(req: Request) {
   try {
+    // Get token from cookies
+    const cookies = req.headers.get('cookie');
+    const token = cookies
+      ?.split('; ')
+      .find((row) => row.startsWith('token='))
+      ?.split('=')[1];
+
+    if (!token) {
+      return NextResponse.json(
+        {message: 'Authorization required'},
+        {status: 401}
+      );
+    }
+
+    // Decode the token
+    const decodedToken = await decodeToken(token);
+    if (!decodedToken) {
+      return NextResponse.json(
+        {message: 'Invalid or expired token'},
+        {status: 401}
+      );
+    }
+
+    // Fetch user data
     const user = await prisma.user.findFirst({
       where: {
-        id: Number(userId),
-        email: email,
+        id: decodedToken.id,
       },
       select: {
         id: true,
@@ -37,22 +43,12 @@ export async function GET() {
     });
 
     if (!user) {
-      return NextResponse.json(
-        {error: 'User Not Found'},
-        {
-          status: 404,
-        }
-      );
+      return NextResponse.json({message: 'User not found'}, {status: 404});
     }
 
-    return NextResponse.json({data: user}, {status: 200});
+    return NextResponse.json({data: user});
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      {error: 'Internal Server Error'},
-      {
-        status: 500,
-      }
-    );
+    console.error('Error fetching user:', error);
+    return NextResponse.json({message: 'Internal server error'}, {status: 500});
   }
 }

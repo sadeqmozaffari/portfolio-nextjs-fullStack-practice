@@ -1,7 +1,8 @@
 import {PrismaClient} from '@prisma/client';
 import {NextRequest, NextResponse} from 'next/server';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
+import {encodeToken} from '../../../../helper/authentication';
 interface ILoginBody {
   email: string;
   password: string;
@@ -30,14 +31,8 @@ export async function POST(req: NextRequest) {
       if (!valid) {
         return NextResponse.json({message: 'Invalid Password'}, {status: 400});
       }
-      const tokeData = {
-        id: userExist.id,
-        email: userExist.email,
-      };
-      // encrypt the data with this key my secret
-      const token = await jwt.sign(tokeData, 'my secret', {
-        expiresIn: '5h',
-      });
+    
+      const token = await encodeToken(userExist.id);
 
       const response = NextResponse.json(
         {message: 'user login successfully'},
@@ -51,10 +46,6 @@ export async function POST(req: NextRequest) {
         maxAge: 60 * 60 * 5, // 5 ساعت به ثانیه
         sameSite: 'strict', // امنیت Cross-Site
       });
-      // response.cookies.set('Set-Cookie', `token="${token}"; HttpOnly; Path=/`);
-      // تنظیم هدرها
-      // response.headers.set('Custom-Header', 'MyHeaderValue');
-      // response.headers.set('Cache-Control', 'no-store');
 
       return response;
     }
