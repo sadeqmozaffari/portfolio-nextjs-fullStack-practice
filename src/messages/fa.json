@@ -1,0 +1,17 @@
+{
+  "language":{
+  "lang":"fa"
+},
+  "sidebar":{
+    
+    "dashboard":"داشبورد",
+    "settings":"تنظیمات",
+    "sign_out": "خروج",
+    "posts":"پوست ها"
+  },
+     "posts":"پوست ها",
+         "Post": {
+    "title": "پست ها",
+    "about": ""
+  }
+}

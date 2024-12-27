@@ -1,10 +1,8 @@
 import {NextResponse} from 'next/server';
 import type {NextRequest} from 'next/server';
 import {isAuthenticated} from './helper/authentication';
-
 // مسیرهایی که نیاز به احراز هویت ندارند
 const bypassAuth = ['/admin/auth/signin', '/admin/auth/signup'];
-
 export async function middleware(request: NextRequest) {
   const {pathname} = request.nextUrl;
 
@@ -14,6 +12,7 @@ export async function middleware(request: NextRequest) {
     if (!bypassAuth.includes(pathname)) {
       try {
         const authStatus = await isAuthenticated(request);
+
         // در صورت عدم احراز هویت
         if (!authStatus?.status) {
           const signinUrl = new URL('/admin/auth/signin', request.url);
@@ -31,3 +30,4 @@ export async function middleware(request: NextRequest) {
   // ادامه پردازش برای مسیرهای دیگر
   return NextResponse.next();
 }
+

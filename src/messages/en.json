@@ -1,0 +1,18 @@
+{
+"language":{
+  "lang":"en"
+},
+    "Post": {
+    "title": "Post",
+    "about": ""
+  },
+  "sidebar":{
+    
+    "dashboard":"Dashboard",
+    "settings":"Settings",
+    "sign_out": "Sign Out",
+    "posts":"Posts"
+  }
+
+    
+}
